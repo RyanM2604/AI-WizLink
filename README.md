@@ -2,6 +2,8 @@
 
 Welcome to WizLink's README! This README provides an overview of WizLink and how to set it up and use it.
 
+## [Visit Site](https://wizlink-3hk7.onrender.com/)
+
 ## Table of Contents
 
 - [Introduction](#introduction)

@@ -1,0 +1,13 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    ChatBot
+{% endblock %}
+
+{% block main %}
+    <form style="margin-top: 600px; text-align: center;" method="post" action="{{ url_for('chatbot_endpoint')}}">
+        <label for="message">Message:</label>
+        <input type="text" id="message" name="message" required>
+        <button type="submit">Send</button>
+    </form>
+{% endblock %}

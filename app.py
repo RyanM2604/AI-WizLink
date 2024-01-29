@@ -12,6 +12,7 @@ from email_validator import validate_email, EmailNotValidError
 import twilio.jwt.access_token
 import twilio.jwt.access_token.grants
 import twilio.rest
+from  openai import OpenAI
 import math
 
 # App object config
@@ -36,9 +37,10 @@ Session(app)
 # Database config with cs50 library
 db = SQL("sqlite:///main.db") 
 
-
 app.config['SQLALCHEMY_DATABASE_URI'] = "sqlite:///main.db"
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+
+client = OpenAI(api_key=os.environ["OPENAI_API_KEY"])
 
 def login_required(f):
     @wraps(f)
@@ -258,3 +260,28 @@ def leaderboard():
 def awards():
     points = db.execute("SELECT points FROM users WHERE id = ?", session["user_id"])[0]["points"]
     return render_template("awards.html", points=points)
+
+@app.route("/chatbot")
+def chatbot():
+    return render_template("chatbot.html")
+
+@app.route("/chatbot_endpoint", methods=["POST"])
+def chatbot_endpoint():
+    input = request.form["message"]
+    chat_history = []
+    response = client.chat.completions.create(
+        messages=[
+            {
+                "role": "user",
+                "content": input,
+            }
+        ],
+        model="gpt-3.5-turbo-1106",
+    )
+
+    print(response.choices[0].message.content)
+
+    bot_response = response.choices[0].message.content
+    chat_history.append(f"User: {input}\nChatbot: {bot_response}")
+
+    return render_template("chatbot_response.html", user_input=input, bot_response=bot_response)
